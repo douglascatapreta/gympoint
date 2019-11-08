@@ -41,7 +41,7 @@ class StudentController {
       id,
       name,
       email,
-      birthdate,
+      age: new Date().getFullYear() - birthdate.getFullYear(),
       weight,
       height,
     });
@@ -85,7 +85,7 @@ class StudentController {
       id,
       name,
       email,
-      birthdate,
+      age: new Date().getFullYear() - birthdate.getFullYear(),
       weight,
       height,
     });
