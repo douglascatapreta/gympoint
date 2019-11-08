@@ -77,7 +77,7 @@ class StudentController {
       }
     }
 
-    const { id, name, email, birthdate, weight, height } = student.update(
+    const { id, name, email, birthdate, weight, height } = await student.update(
       req.body
     );
 
