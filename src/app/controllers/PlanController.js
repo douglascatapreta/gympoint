@@ -9,7 +9,7 @@ class PlanController {
       attributes: ['id', 'title', 'duration', 'price'],
     });
 
-    res.json(plans);
+    return res.json(plans);
   }
 
   async store(req, res) {
@@ -97,7 +97,7 @@ class PlanController {
 
     await plan.destroy();
 
-    return res.json({ status: 'Deleted' });
+    return res.json();
   }
 }
 
