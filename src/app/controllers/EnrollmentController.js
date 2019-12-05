@@ -144,15 +144,15 @@ class EnrollmentController {
   }
 
   async delete(req, res) {
-    // const checkUserAdmin = await User.findByPk(req.userId);
+    const checkUserAdmin = await User.findByPk(req.userId);
 
-    // if (!checkUserAdmin) {
-    //   return res.status(401).json({ error: 'User is not an administrator' });
-    // }
+    if (!checkUserAdmin) {
+      return res.status(401).json({ error: 'User is not an administrator' });
+    }
 
-    // const plan = await Plan.findByPk(req.params.id);
+    const enrollment = await Enrollment.findByPk(req.params.id);
 
-    // await plan.destroy();
+    await enrollment.destroy();
 
     return res.json();
   }
