@@ -5,6 +5,8 @@ import Enrollment from '../models/Enrollment';
 import Plan from '../models/Plan';
 import User from '../models/User';
 import Student from '../models/Student';
+import Queue from '../../lib/Queue';
+import ConfirmationMail from '../jobs/ConfirmationMail';
 
 class EnrollmentController {
   async index(req, res) {
@@ -70,14 +72,7 @@ class EnrollmentController {
 
     const plan = await Plan.findByPk(req.body.plan_id);
 
-    const {
-      id,
-      student_id,
-      plan_id,
-      start_date,
-      end_date,
-      price,
-    } = await Enrollment.create({
+    let enrollment = await Enrollment.create({
       student_id: req.body.student_id,
       plan_id: req.body.plan_id,
       start_date: req.body.start_date,
@@ -85,7 +80,31 @@ class EnrollmentController {
       price: plan.price * plan.duration,
     });
 
-    return res.json({ id, student_id, plan_id, start_date, end_date, price });
+    enrollment = await Enrollment.findByPk(enrollment.id, {
+      include: [
+        {
+          model: Student,
+          as: 'student',
+          attributes: ['name', 'email'],
+        },
+        {
+          model: Plan,
+          as: 'plan',
+          attributes: ['title', 'duration', 'price'],
+        },
+      ],
+    });
+
+    await Queue.add(ConfirmationMail.key, { enrollment });
+
+    return res.json({
+      id: enrollment.id,
+      student_id: enrollment.student_id,
+      plan_id: enrollment.plan_id,
+      start_date: enrollment.start_date,
+      end_date: enrollment.end_date,
+      price: enrollment.price,
+    });
   }
 
   async update(req, res) {
